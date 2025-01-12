@@ -26,3 +26,24 @@ exports.validateRegister = (req, res, next) => {
 
     next();
 };
+
+exports.validateLogin = (req, res, next) => {
+    const { email, password } = req.body;
+
+    // Check if all required fields are present
+    if (!email && !password) {
+        return errorResponse(res, 'All fields are required', 400);
+    }
+
+    // Validate email
+    if (!isValidEmail(email)) {
+        return errorResponse(res, 'Invalid email format', 400);
+    }
+
+    // Validate password
+    if (!isValidPassword(password)) {
+        return errorResponse(res, 'Password must be at least 6 characters long', 400);
+    }
+
+    next();
+};
