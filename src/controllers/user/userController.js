@@ -1,15 +1,16 @@
 const crypto = require('crypto');
-const { successResponse, errorResponse } = require('../helpers/responseHelper');
+const { successResponse, errorResponse } = require('../../helpers/responseHelper');
 const {
     checkExistingUser,
     createUser,
     findUserByEmail,
     findUserByResetToken,updateUserPassword,
-} = require('../services/userServices');
-const transporter = require('../config/email');
-const { generateEmailTemplateForRegister, resetPasswordTemplate } = require('../helpers/emailHelper');
-const { generateToken } = require('../helpers/tokenHelper');
-const { isValidEmail, isValidPassword } = require('../utils/validationUtils');
+} = require('../../services/user/userServices');
+const transporter = require('../../config/email');
+const { generateEmailTemplateForRegister, resetPasswordTemplate } = require('../../helpers/emailHelper');
+const { generateToken } = require('../../helpers/tokenHelper');
+const { isValidEmail, isValidPassword } = require('../../utils/validationUtils');
+const logError = require('../log/errorLog');
 
 /*******************************************************
  * @desc Handles user registration
@@ -46,6 +47,7 @@ exports.register = async (req, res) => {
     } catch (error) {
         /****************** Step 6: Handle Errors ******************/
         console.error(error);
+        await logError('Error in create new user', error, req);
         return errorResponse(res, 'Internal server error', 500);
     }
 };
@@ -78,6 +80,7 @@ exports.login = async (req, res) => {
     } catch(error) {
         /****************** Step 5: Handle Errors ******************/
         console.log('Error : ', error);
+        await logError('Error in Login', error, req);
         return errorResponse(res, 'Internal Server error', 500);
     }
 }
@@ -129,6 +132,7 @@ exports.forgotPassword = async (req, res) => {
     } catch(error) {
         /****************** Step 6: Handle Errors ******************/
         console.log('error : ', error);
+        await logError('Error in Forgot Password', error, req);
         return errorResponse(res, 'Internal Server error.', 500);
     }
 }
@@ -177,6 +181,7 @@ exports.resetPassword = async (req, res) => {
     } catch (error) {
         /***************** Step 5: Error Handling *****************/
         console.error('Reset Password Error:', error);
+        await logError('Error in reset password', error, req);
         return errorResponse(res, 'An internal server error occurred. Please try again later.', 500);
     }
 };
